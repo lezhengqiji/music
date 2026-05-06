@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>瞬时歌荐 · 冷启动推荐 | 统计反馈 + 离开退出</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            background: #1a232e;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* 单页视图容器 — 绝对定位叠层，通过显示隐藏实现“跳转”效果，不会滚动看到其他页面 */
+        .page-viewport {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 20px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.35s ease-in-out, visibility 0s linear 0.35s;
+            overflow-y: auto;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .page.active {
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.35s ease-in-out, visibility 0s linear 0s;
+            z-index: 10;
+        }
+
+        /* 背景层半透明遮罩保证文字可读 */
+        .page::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(18, 24, 32, 0.6);
+            backdrop-filter: blur(2px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* 卡片磨砂玻璃效果 */
+        .card {
+            position: relative;
+            z-index: 2;
+            max-width: 540px;
+            width: 100%;
+            background: rgba(248, 250, 252, 0.94);
+            backdrop-filter: blur(14px);
+            border-radius: 36px;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.25), 0 2px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 245, 0.25);
+        }
+
+        /* 封面卡片极致简约 */
+        .cover-card {
+            text-align: center;
+            background: rgba(245, 245, 240, 0.94);
+            backdrop-filter: blur(14px);
+        }
+
+        .cover-title-large {
+            font-size: 3.6rem;
+            font-weight: 600;
+            letter-spacing: 8px;
+            color: #1e2a32;
+            padding: 48px 20px 30px;
+            line-height: 1.2;
+            font-family: 'Inter', 'Noto Serif SC', serif;
+        }
+
+        .start-btn {
+            background: #2c3e4e;
+            border: none;
+            border-radius: 60px;
+            padding: 14px 28px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            width: calc(100% - 56px);
+            margin: 20px auto 40px;
+            display: block;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.1);
+            letter-spacing: 1px;
+        }
+
+        .start-btn:active {
+            transform: scale(0.96);
+            background: #1e2f3c;
+        }
+
+        /* 问题页面样式 */
+        .question-header {
+            padding: 28px 28px 12px;
+            border-bottom: 1px solid rgba(80, 100, 115, 0.2);
+        }
+
+        .q-step {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #2c6e6e;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .question-text {
+            font-size: 1.6rem;
+            font-weight: 550;
+            line-height: 1.35;
+            color: #1e2a36;
+            padding: 12px 0 8px;
+        }
+
+        .options-area {
+            padding: 24px 28px 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .option-item {
+            background: rgba(255, 255, 245, 0.85);
+            border: 1px solid rgba(90, 110, 125, 0.25);
+            border-radius: 60px;
+            padding: 15px 20px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #1f3b4c;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-item:active {
+            transform: scale(0.97);
+            background: rgba(230, 240, 245, 0.95);
+        }
+
+        .option-item.selected {
+            background: #2c3e4e;
+            border-color: #2c3e4e;
+            color: white;
+            box-shadow: 0 6px 12px rgba(44,62,78,0.3);
+        }
+
+        .next-btn {
+            margin: 8px 28px 32px;
+            background: rgba(255,255,245,0.9);
+            border: 1px solid rgba(80, 100, 115, 0.5);
+            border-radius: 44px;
+            padding: 14px 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2c5f6e;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .next-btn.active {
+            background: #2c3e4e;
+            border-color: #2c3e4e;
+            color: white;
+        }
+
+        .next-btn.inactive {
+            opacity: 0.5;
+            pointer-events: none;
+            background: rgba(225, 232, 240, 0.7);
+        }
+
+        /* 推荐页海报样式 */
+        .rec-card {
+            background: rgba(250, 250, 248, 0.95);
+            backdrop-filter: blur(14px);
+        }
+
+        .poster-container {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            background: #1e2a32;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .song-poster {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .poster-placeholder {
+            font-size: 2.5rem;
+            color: #a0b8cc;
+            background: rgba(30, 40, 50, 0.7);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+            gap: 12px;
+            text-align: center;
+        }
+
+        .rec-info {
+            padding: 24px 28px 28px;
+        }
+
+        .rec-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #2c6e6e;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .song-name {
+            font-size: 2rem;
+            font-weight: 650;
+            color: #1e2f3a;
+            line-height: 1.2;
+            margin-bottom: 4px;
+        }
+
+        .song-artist {
+            font-size: 1rem;
+            color: #4a6272;
+            margin-bottom: 16px;
+        }
+
+        /* 音频播放器简约设计 */
+        .audio-player {
+            margin: 12px 0 12px;
+            width: 100%;
+        }
+        .audio-player audio {
+            width: 100%;
+            border-radius: 40px;
+            outline: none;
+            background: #f0f2f5;
+            height: 46px;
+        }
+
+        /* 双选项：点击听取 + 离开 */
+        .action-buttons {
+            display: flex;
+            gap: 16px;
+            margin: 8px 0 8px;
+            justify-content: space-between;
+        }
+        .action-btn {
+            flex: 1;
+            background: rgba(240, 245, 250, 0.9);
+            border: 1px solid rgba(70, 100, 115, 0.4);
+            border-radius: 60px;
+            padding: 12px 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2c5f6e;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+            backdrop-filter: blur(4px);
+        }
+        .action-btn:active {
+            transform: scale(0.96);
+        }
+        .action-btn.listen-btn {
+            background: #2c3e4e;
+            border-color: #2c3e4e;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .action-btn.leave-btn {
+            background: rgba(220, 225, 230, 0.85);
+            color: #4a5f6e;
+        }
+
+        .philosophy-quote {
+            font-size: 0.9rem;
+            line-height: 1.45;
+            color: #2c4e62;
+            background: rgba(245, 245, 240, 0.75);
+            padding: 14px 18px;
+            border-radius: 24px;
+            margin: 14px 0 16px 0;
+            border-left: 3px solid #8da9b9;
+            font-weight: 450;
+        }
+
+        .rec-desc {
+            font-size: 0.85rem;
+            color: #466472;
+            line-height: 1.45;
+            border-top: 1px solid rgba(100, 120, 130, 0.25);
+            padding-top: 16px;
+            margin-top: 4px;
+        }
+
+        .reset-link {
+            margin-top: 18px;
+            display: inline-block;
+            background: rgba(245, 245, 240, 0.8);
+            border: 1px solid rgba(90, 110, 120, 0.5);
+            border-radius: 40px;
+            padding: 10px 24px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #2c5f6e;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: center;
+        }
+
+        .reset-link:active {
+            background: rgba(215, 225, 232, 0.9);
+        }
+
+        .footer-note {
+            text-align: center;
+            font-size: 0.6rem;
+            color: #7c93a3;
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(100, 120, 130, 0.2);
+        }
+
+        .page::-webkit-scrollbar {
+            width: 4px;
+        }
+        .page::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .page::-webkit-scrollbar-thumb {
+            background: rgba(100,120,130,0.4);
+            border-radius: 10px;
+        }
+        
+        /* 简单确认弹窗样式 (无样式, 使用原生confirm) */
+    </style>
+</head>
+<body>
+<div class="page-viewport">
+    <!-- 第1页 封面 -->
+    <div class="page active" id="page1" style="background-image: url('https://picsum.photos/id/104/1200/1600');">
+        <div class="card cover-card">
+            <div class="cover-title-large">瞬时歌荐</div>
+            <button class="start-btn" id="startBtn">开始测评</button>
+        </div>
+    </div>
+
+    <!-- 第2页 问题1 安静场景 -->
+    <div class="page" id="page2" style="background-image: url('https://picsum.photos/id/29/1200/1600');">
+        <div class="card">
+            <div class="question-header">
+                <div class="q-step">问题 1 / 2</div>
+                <div class="question-text">你今天听歌的场景是偏向学习、休闲的安静场景吗？</div>
+            </div>
+            <div class="options-area" id="q1Options">
+                <div class="option-item" data-q1="yes">是，安静场景（学习/休闲）</div>
+                <div class="option-item" data-q1="no">否，动态场景（通勤/运动）</div>
+            </div>
+            <div class="next-btn inactive" id="toQ2Btn">下一步</div>
+        </div>
+    </div>
+
+    <!-- 第3页 问题2 -->
+    <div class="page" id="page3" style="background-image: url('https://picsum.photos/id/42/1200/1600');">
+        <div class="card">
+            <div class="question-header">
+                <div class="q-step">问题 2 / 2</div>
+                <div class="question-text" id="dynamicQuestionText">你今天更想听带歌词的演唱类歌曲吗？</div>
+            </div>
+            <div class="options-area" id="q2Options"></div>
+            <div class="next-btn inactive" id="toResultBtn">查看推荐</div>
+        </div>
+    </div>
+
+    <!-- 第4页 推荐结果页 (歌曲海报 + 音源 + 点击听取/离开统计) -->
+    <div class="page" id="page4" style="background-image: url('https://picsum.photos/id/15/1200/1600');">
+        <div class="card rec-card">
+            <div class="poster-container" id="posterContainer">
+                <div class="poster-placeholder" id="posterPlaceholder">🎵 唱片封面</div>
+                <img id="songPoster" class="song-poster" style="display: none;" alt="歌曲海报">
+            </div>
+            <div class="rec-info">
+                <div class="rec-label">为你推荐 · 冷启动匹配</div>
+                <div class="song-name" id="recSongName">-</div>
+                <div class="song-artist" id="recArtist">-</div>
+                
+                <!-- 音频播放器区域 (内嵌，用户也可通过“点击听取”触发) -->
+                <div class="audio-player" id="audioPlayerContainer" style="display: none;">
+                    <audio id="songAudio" controls preload="metadata">
+                        您的浏览器不支持音频播放。
+                    </audio>
+                </div>
+
+                <!-- 双选项：点击听取 + 离开 (离开将关闭页面/退出网站) -->
+                <div class="action-buttons" id="actionButtons">
+                    <button class="action-btn listen-btn" id="listenTrackBtn">🎧 点击听取</button>
+                    <button class="action-btn leave-btn" id="leaveTrackBtn">🚪 离开</button>
+                </div>
+                
+                <div class="philosophy-quote" id="philosophyQuote">
+                    音乐是灵魂的镜像，此刻的旋律映照你内心的风景。
+                </div>
+                <div class="rec-desc" id="recDesc">根据你的两个选择，精准推送契合度最高的歌曲。</div>
+                <div style="margin-top: 14px;">
+                    <span class="reset-link" id="resetAllBtn">⟳ 重新评测</span>
+                </div>
+            </div>
+            <div class="footer-note">基于问卷先验 · 双问动态分群 | 统计听取意愿(反馈发布者)</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --------------------------------------------------------------
+    // 瞬时歌荐 —— 页面跳转交互，第四页包含海报、音源、统计按钮
+    // 离开按钮功能：关闭当前页面（退出网站）
+    // 并提供详细指引：如何修改音频、歌曲海报、查看统计数据
+    // --------------------------------------------------------------
+    
+    // ------------------- 配置区域（发布者修改此处即可）-------------------
+    // 1. 如何修改歌曲海报和音频？
+    //    在 SONG_MEDIA 对象中，为每首歌曲配置 posterUrl (海报图片链接) 和 audioUrl (音频文件链接)
+    //    支持本地路径(如 '/images/xiaoxingyun.jpg') 或 网络URL。
+    //    当前使用免费占位演示音频，请替换为您自己的资源。
+    //
+    // 2. 如何查看统计数据？
+    //    - 打开浏览器开发者工具 (F12) → Console 控制台，会输出统计摘要表格。
+    //    - 或在 Console 中输入: localStorage.getItem('InstantSongStats') 查看原始 JSON。
+    //    - 发布者也可通过 window.publisherStats 获取实时汇总数据。
+    //    - 数据持久化存储在 localStorage 中，不会因刷新丢失。
+    //    - 若需发送到服务器，可在 reportStatsToPublisher() 函数中添加 AJAX/fetch 请求。
+    // ---------------------------------------------------------------------
+    
+    const SONG_MEDIA = {
+        "小幸运": {
+            // 海报图片地址：可替换为本地或在线图片URL
+            posterUrl: "https://www.21qupu.com/thumb/ad9be096759c6d82fd2404041e519e8f.jpg",
+            // 音频文件地址：可替换为真实歌曲文件 (.mp3/.ogg等)
+            audioUrl: "music/小幸运.mp3"
+        },
+        "River Flows in You": {
+            posterUrl: "https://ts2.tc.mm.bing.net/th/id/OIP-C.aiO4Hgg_zMxX4N2euZcfrAAAAA?rs=1&pid=ImgDetMain&o=7&rm=3",
+            audioUrl: "music/River Flows in You.mp3"
+        },
+        "孤勇者": {
+            posterUrl: "https://n.sinaimg.cn/sinakd10115/792/w796h796/20220325/076f-4280776ff6dedd9c96db597a70de1287.jpg",
+            audioUrl: "music/孤勇者.mp3"
+        },
+        "大风吹": {
+            posterUrl: "https://ts1.tc.mm.bing.net/th/id/R-C.6bd6da2053b3a409d5b524bfb7bc5361?rik=2BweltAYBg4xfw&riu=http%3a%2f%2fexp-picture.cdn.bcebos.com%2fbaab208630486143d931fd868febf6a75e0f537c.jpg%3fx-bce-process%3dimage%252Fcrop%252Cx_0%252Cy_0%252Cw_400%252Ch_300%252Fformat%252Cf_auto%252Fquality%252Cq_80&ehk=o11LnHDmgmx9p1Y1i%2b3U%2bpzgu9KRlAYBtbLMrzsaTzk%3d&risl=&pid=ImgRaw&r=0",
+            audioUrl: "music/大风吹.mp3"
+        }
+    };
+    
+    // 哲思语录 (可自定义)
+    const PHILOSOPHY_TEXTS = {
+        "小幸运": "青春是一场大雨，即使感冒了，也盼望回头再淋它一次。遇见你的注定，便是所有幸运的起点。",
+        "River Flows in You": "钢琴如流水，静谧中藏着最深的温柔；所有波澜不惊的日常，都是命运馈赠的和弦。",
+        "孤勇者": "谁说站在光里的才算英雄？黑暗中独自对峙的勇气，才是灵魂真正的勋章。",
+        "大风吹": "岁月如风，吹散浮华却留下真实。任它大风吹，内心自有一片宁静的沃野。"
+    };
+    
+    const RECOMMENDATION_MAP = {
+        C11: { songName: "小幸运", artist: "田馥甄", description: "安静场景下的温暖治愈，流行旋律自然流淌，契合你偏爱的演唱类歌曲。" },
+        C10: { songName: "River Flows in You", artist: "Yiruma 李闰珉", description: "纯净钢琴曲，学习或休闲时流淌的宁静旋律，与纯音乐偏好深度契合。" },
+        C01: { songName: "孤勇者", artist: "陈奕迅", description: "动态节奏下的热血战歌，充满力量与燃感，精准匹配你的节奏偏好。" },
+        C00: { songName: "大风吹", artist: "刘惜君 / 王赫野", description: "复古流行氛围，动态场景里依然保持松弛，非热血的独特韵味。" }
+    };
+    // ------------------- 核心逻辑 -------------------
+    
+    let currentPageIndex = 1;
+    const pages = {
+        1: document.getElementById('page1'),
+        2: document.getElementById('page2'),
+        3: document.getElementById('page3'),
+        4: document.getElementById('page4')
+    };
+    
+    function showPage(index) {
+        for (let i = 1; i <= 4; i++) {
+            if (pages[i]) pages[i].classList.remove('active');
+        }
+        if (pages[index]) pages[index].classList.add('active');
+        currentPageIndex = index;
+        if (pages[index]) pages[index].scrollTop = 0;
+    }
+    
+    let userChoice = { q1: null, q2: null };
+    
+    // 统计数据结构
+    let statsData = [];
+    
+    function loadStatsFromStorage() {
+        const stored = localStorage.getItem('InstantSongStats');
+        if (stored) {
+            try {
+                statsData = JSON.parse(stored);
+            } catch(e) { statsData = []; }
+        } else {
+            statsData = [];
+        }
+    }
+    
+    function saveStatsToStorage() {
+        localStorage.setItem('InstantSongStats', JSON.stringify(statsData));
+        reportStatsToPublisher();
+    }
+    
+    function recordAction(songName, actionType, groupContext = null) {
+        const record = {
+            song: songName,
+            action: actionType,     // 'listen' 或 'leave'
+            timestamp: new Date().toISOString(),
+            userGroup: groupContext ? groupContext : (userChoice.q1 && userChoice.q2 !== null ? `${userChoice.q1}-${userChoice.q2}` : 'unknown'),
+            recommendGroup: getCurrentGroupKey()
+        };
+        statsData.push(record);
+        saveStatsToStorage();
+        
+        if (actionType === 'listen') {
+            const audioEl = document.getElementById('songAudio');
+            if (audioEl && audioEl.src) {
+                audioEl.play().catch(e => console.log("播放需用户交互", e));
+            }
+        }
+        
+        // 离开操作：关闭页面/退出网站 (添加二次确认防止误触)
+        if (actionType === 'leave') {
+            // 确认退出对话框
+            const confirmLeave = confirm("确定要离开吗？您的反馈已记录，感谢参与。");
+            if (confirmLeave) {
+                // 尝试关闭当前页面 (浏览器安全限制，但大多数情况会生效，或者显示空白页)
+                // 方法1: window.close() (仅对由脚本打开的窗口有效，但尽力尝试)
+                // 方法2: 跳转到空页面或about:blank 并尝试关闭
+                window.location.href = "about:blank";
+                // 备用延时关闭
+                setTimeout(() => {
+                    window.close();
+                }, 100);
+                // 如果都不生效，提供一个友好提示
+                setTimeout(() => {
+                    document.body.innerHTML = '<div style="text-align:center;padding:50px;font-family:sans-serif;">您已离开瞬时歌荐，欢迎下次再来。</div>';
+                }, 200);
+            }
+        }
+    }
+    
+    function getCurrentSongName() {
+        const songNameEl = document.getElementById('recSongName');
+        return songNameEl ? songNameEl.innerText : null;
+    }
+    
+    function getCurrentGroupKey() {
+        if (!userChoice.q1 || userChoice.q2 === null) return 'unknown';
+        const isQuiet = (userChoice.q1 === 'yes');
+        if (isQuiet) return userChoice.q2 ? 'C11' : 'C10';
+        else return userChoice.q2 ? 'C01' : 'C00';
+    }
+    
+    // 反馈给发布者：控制台输出 + 挂载全局变量，方便查看
+    function reportStatsToPublisher() {
+        const summary = {};
+        statsData.forEach(rec => {
+            if (!summary[rec.song]) {
+                summary[rec.song] = { listen: 0, leave: 0, total: 0 };
+            }
+            if (rec.action === 'listen') summary[rec.song].listen++;
+            else if (rec.action === 'leave') summary[rec.song].leave++;
+            summary[rec.song].total = summary[rec.song].listen + summary[rec.song].leave;
+        });
+        const totalActions = statsData.length;
+        console.log("📊 【瞬时歌荐·发布者统计】行为汇总 (不展示给用户)");
+        console.table(summary);
+        console.log(`总反馈次数: ${totalActions} | 听取总数: ${statsData.filter(r=>r.action==='listen').length} | 离开总数: ${statsData.filter(r=>r.action==='leave').length}`);
+        // 挂载全局变量方便发布者查看
+        window.publisherStats = { summary, raw: statsData, lastUpdated: new Date().toISOString() };
+        console.log("💡 统计数据已存入 localStorage['InstantSongStats']，也可在控制台输入 window.publisherStats 查看详细");
+    }
+    
+    function getUserGroupKey(q1, q2Bool) {
+        const isQuiet = (q1 === 'yes');
+        if (isQuiet) return q2Bool ? 'C11' : 'C10';
+        else return q2Bool ? 'C01' : 'C00';
+    }
+    
+    function updateRecommendationPage() {
+        if (!userChoice.q1 || userChoice.q2 === null) return;
+        const groupKey = getUserGroupKey(userChoice.q1, userChoice.q2);
+        const rec = RECOMMENDATION_MAP[groupKey];
+        if (!rec) return;
+        const song = rec.songName;
+        const media = SONG_MEDIA[song] || { posterUrl: "", audioUrl: "" };
+        
+        document.getElementById('recSongName').innerText = rec.songName;
+        document.getElementById('recArtist').innerText = rec.artist;
+        document.getElementById('recDesc').innerHTML = rec.description;
+        
+        const quoteDiv = document.getElementById('philosophyQuote');
+        if (quoteDiv) quoteDiv.innerHTML = `✨ ${PHILOSOPHY_TEXTS[song] || "旋律承载心境，愿音乐伴你左右。"}`;
+        
+        const posterImg = document.getElementById('songPoster');
+        const posterPlace = document.getElementById('posterPlaceholder');
+        if (media.posterUrl) {
+            posterImg.src = media.posterUrl;
+            posterImg.alt = `${rec.songName} 海报`;
+            posterImg.style.display = 'block';
+            posterPlace.style.display = 'none';
+            posterImg.onerror = () => {
+                posterImg.style.display = 'none';
+                posterPlace.style.display = 'flex';
+                posterPlace.innerHTML = '🎵 海报加载失败';
+            };
+        } else {
+            posterImg.style.display = 'none';
+            posterPlace.style.display = 'flex';
+            posterPlace.innerHTML = '🎵 暂无海报';
+        }
+        
+        const audioContainer = document.getElementById('audioPlayerContainer');
+        const audioElem = document.getElementById('songAudio');
+        if (media.audioUrl) {
+            audioElem.src = media.audioUrl;
+            audioContainer.style.display = 'block';
+            audioElem.load();
+        } else {
+            audioContainer.style.display = 'none';
+        }
+        
+        let groupDesc = "";
+        if (groupKey === 'C11') groupDesc = "安静场景 · 演唱类 · 治愈内省";
+        else if (groupKey === 'C10') groupDesc = "安静场景 · 纯音乐 · 冥想之河";
+        else if (groupKey === 'C01') groupDesc = "动态场景 · 热血燃志 · 孤勇前行";
+        else groupDesc = "动态场景 · 复古非热血 · 自在如风";
+        const descExtra = document.querySelector('#recDesc');
+        if (descExtra && !descExtra.innerHTML.includes(groupDesc)) {
+            descExtra.innerHTML = `${rec.description}<br><span style="font-size:0.75rem; color:#5f7f8c; margin-top:6px; display:inline-block;">🎧 聆听心境 · ${groupDesc}</span>`;
+        }
+        
+        // 绑定统计按钮 (确保事件最新)
+        const listenBtn = document.getElementById('listenTrackBtn');
+        const leaveBtn = document.getElementById('leaveTrackBtn');
+        const currentSong = rec.songName;
+        // 移除旧监听，使用新克隆避免重复绑定
+        const newListen = listenBtn.cloneNode(true);
+        const newLeave = leaveBtn.cloneNode(true);
+        listenBtn.parentNode.replaceChild(newListen, listenBtn);
+        leaveBtn.parentNode.replaceChild(newLeave, leaveBtn);
+        newListen.id = 'listenTrackBtn';
+        newLeave.id = 'leaveTrackBtn';
+        newListen.addEventListener('click', (e) => {
+            e.preventDefault();
+            recordAction(currentSong, 'listen', groupKey);
+            const audioEl = document.getElementById('songAudio');
+            if (audioEl && audioEl.src) audioEl.play().catch(e=>console.log);
+        });
+        newLeave.addEventListener('click', (e) => {
+            e.preventDefault();
+            recordAction(currentSong, 'leave', groupKey);
+            // 离开在recordAction中已处理退出逻辑
+        });
+    }
+    
+    // 问卷与页面跳转
+    const startBtn = document.getElementById('startBtn');
+    startBtn.addEventListener('click', () => {
+        fullResetInternal(false);
+        showPage(2);
+    });
+    
+    const q1Options = document.querySelectorAll('[data-q1]');
+    const toQ2Btn = document.getElementById('toQ2Btn');
+    function refreshQ1Next() {
+        if (userChoice.q1) {
+            toQ2Btn.classList.remove('inactive');
+            toQ2Btn.classList.add('active');
+        } else {
+            toQ2Btn.classList.remove('active');
+            toQ2Btn.classList.add('inactive');
+        }
+    }
+    q1Options.forEach(opt => {
+        opt.addEventListener('click', function() {
+            q1Options.forEach(o => o.classList.remove('selected'));
+            this.classList.add('selected');
+            userChoice.q1 = this.getAttribute('data-q1');
+            refreshQ1Next();
+        });
+    });
+    toQ2Btn.addEventListener('click', () => {
+        if (!userChoice.q1) return;
+        renderSecondQuestion();
+        showPage(3);
+    });
+    
+    const dynamicQuestionText = document.getElementById('dynamicQuestionText');
+    const q2OptionsDiv = document.getElementById('q2Options');
+    const toResultBtn = document.getElementById('toResultBtn');
+    
+    function renderSecondQuestion() {
+        q2OptionsDiv.innerHTML = '';
+        userChoice.q2 = null;
+        toResultBtn.classList.remove('active');
+        toResultBtn.classList.add('inactive');
+        if (userChoice.q1 === 'yes') {
+            dynamicQuestionText.innerText = '你今天更想听带歌词的演唱类歌曲吗？';
+            q2OptionsDiv.innerHTML = `<div class="option-item" data-q2="yes">是，喜欢演唱类（带歌词）</div>
+                                      <div class="option-item" data-q2="no">否，偏好纯音乐／器乐</div>`;
+        } else {
+            dynamicQuestionText.innerText = '你今天更想听热血/节奏感强烈的歌曲吗？';
+            q2OptionsDiv.innerHTML = `<div class="option-item" data-q2="yes">是，热血燃曲／快节奏</div>
+                                      <div class="option-item" data-q2="no">否，非热血／氛围复古</div>`;
+        }
+        const newOpts = document.querySelectorAll('[data-q2]');
+        newOpts.forEach(opt => {
+            opt.addEventListener('click', function() {
+                newOpts.forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+                userChoice.q2 = (this.getAttribute('data-q2') === 'yes');
+                toResultBtn.classList.remove('inactive');
+                toResultBtn.classList.add('active');
+            });
+        });
+    }
+    
+    toResultBtn.addEventListener('click', () => {
+        if (userChoice.q2 === null) return;
+        updateRecommendationPage();
+        showPage(4);
+    });
+    
+    const resetBtn = document.getElementById('resetAllBtn');
+    resetBtn.addEventListener('click', () => {
+        fullResetInternal(true);
+        showPage(1);
+    });
+    
+    function fullResetInternal(resetAll = true) {
+        userChoice.q1 = null;
+        userChoice.q2 = null;
+        q1Options.forEach(opt => opt.classList.remove('selected'));
+        if (q2OptionsDiv) q2OptionsDiv.innerHTML = '';
+        toQ2Btn.classList.remove('active');
+        toQ2Btn.classList.add('inactive');
+        toResultBtn.classList.remove('active');
+        toResultBtn.classList.add('inactive');
+        document.getElementById('recSongName').innerText = '-';
+        document.getElementById('recArtist').innerText = '-';
+        document.getElementById('recDesc').innerHTML = '根据你的两个选择，精准推送契合度最高的歌曲。';
+        const defQuote = document.getElementById('philosophyQuote');
+        if (defQuote) defQuote.innerHTML = '✨ 音乐是灵魂的镜像，此刻的旋律映照你内心的风景。';
+        const posterImg = document.getElementById('songPoster');
+        const posterPlace = document.getElementById('posterPlaceholder');
+        if (posterImg && posterPlace) {
+            posterImg.style.display = 'none';
+            posterPlace.style.display = 'flex';
+            posterPlace.innerHTML = '🎵 唱片封面';
+        }
+        const audioWrap = document.getElementById('audioPlayerContainer');
+        if (audioWrap) audioWrap.style.display = 'none';
+        const audioEl = document.getElementById('songAudio');
+        if (audioEl) audioEl.src = '';
+    }
+    
+    loadStatsFromStorage();
+    window.addEventListener('load', () => {
+        fullResetInternal(false);
+        showPage(1);
+        console.log("========== 瞬时歌荐已启动 ==========");
+        console.log("📌 如何修改音频/海报：在代码顶部 SONG_MEDIA 对象中修改 posterUrl 和 audioUrl");
+        console.log("📌 如何查看统计数据：打开控制台，输入 window.publisherStats 或查看 localStorage");
+        console.log("===================================");
+    });
+    
+    document.querySelectorAll('.option-item, .next-btn, .start-btn, .reset-link').forEach(el => {
+        el.style.touchAction = 'manipulation';
+    });
+</script>
+</body>
+</html>
