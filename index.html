@@ -516,18 +516,14 @@
         // 如果配置了远程端点，则发送 POST 请求
         if (STATS_ENDPOINT && STATS_ENDPOINT.startsWith("http")) {
             try {
-                // 模拟表单提交或 JSON 提交
-                const formData = new URLSearchParams();
-                formData.append("entry.song", song);
-                formData.append("entry.action", action);
-                formData.append("entry.group", group);
-                formData.append("entry.time", payload.timestamp);
-                
-                await fetch(STATS_ENDPOINT, {
-                    method: "POST",
-                    mode: "no-cors", // 避免跨域限制（Google Forms 适用）
-                    body: formData
-                });
+                // ★★★ 关键修复：先将占位符替换为真实值 ★★★
+            let finalUrl = STATS_ENDPOINT;
+            finalUrl = finalUrl.replace("{song}", encodeURIComponent(payload.song));
+            finalUrl = finalUrl.replace("{action}", encodeURIComponent(payload.action));
+            finalUrl = finalUrl.replace("{group}", encodeURIComponent(payload.group));
+            
+            // 使用替换后的 URL 发送 GET 请求（Google Forms 标准方式）
+            await fetch(finalUrl, { method: 'GET', mode: 'no-cors' });
                 console.log("✅ 统计数据已提交至发布者服务器");
             } catch (err) {
                 console.warn("⚠️ 远程上报失败（可忽略，本地已记录）:", err);
