@@ -500,40 +500,20 @@
     };
     
     // 跨设备上报函数 (发送到发布者配置的服务器/表单)
-    async function reportToPublisher(song, action, group, recommendGroup) {
-    // 构造带参数的跳转链接
+    const STATS_ENDPOINT = "https://docs.qq.com/form/page/DRXV2aFdTZWRxa29U#/fill?entry.1={song}&entry.2={action}&entry.3={group}";
+
+async function reportToPublisher(song, action, group, recommendGroup) {
     let finalUrl = STATS_ENDPOINT
         .replace("{song}", encodeURIComponent(song))
         .replace("{action}", encodeURIComponent(action))
         .replace("{group}", encodeURIComponent(group || recommendGroup));
     
     console.log("📡 打开腾讯文档收集表:", finalUrl);
-    
-    // 新窗口打开，用户确认后提交
     window.open(finalUrl, "_blank");
 }
-        
-        // 控制台打印跨设备通知（发布者可见）
-        console.log("📡 跨设备统计上报:", payload);
-        
-        // 如果配置了远程端点，则发送 POST 请求
-        if (STATS_ENDPOINT && STATS_ENDPOINT.startsWith("http")) {
-            try {
-                // ★★★ 关键修复：先将占位符替换为真实值 ★★★
-            let finalUrl = STATS_ENDPOINT;
-            finalUrl = finalUrl.replace("{song}", encodeURIComponent(payload.song));
-            finalUrl = finalUrl.replace("{action}", encodeURIComponent(payload.action));
-            finalUrl = finalUrl.replace("{group}", encodeURIComponent(payload.group));
-            
-            // 使用替换后的 URL 发送 GET 请求（Google Forms 标准方式）
-            await fetch(finalUrl, { method: 'GET', mode: 'no-cors' });
-                console.log("✅ 统计数据已提交至发布者服务器");
-            } catch (err) {
-                console.warn("⚠️ 远程上报失败（可忽略，本地已记录）:", err);
-            }
-        } else {
-            console.log("💡 提示: 未配置远程统计 endpoint，仅本地记录。发布者可创建 Google 表单并填入 STATS_ENDPOINT 以实现跨设备汇总。");
-        }
+
+// 在点击按钮时调用这个函数
+// 例如：reportToPublisher("小幸运", "listen", "C11");
         
         // 同时保留本地存储 (供发布者调试)
         let localStats = JSON.parse(localStorage.getItem("InstantSongStats_Global") || "[]");
