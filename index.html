@@ -13,7 +13,7 @@
         }
 
         body {
-            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            font-family: system-ui, -apple-system, 'Segoe UI', 'Roboto', sans-serif;
             background: #1a232e;
             overflow: hidden;
             height: 100vh;
@@ -39,17 +39,15 @@
             padding: 24px 20px;
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.35s ease-in-out, visibility 0s linear 0.35s;
+            transition: opacity 0.35s ease;
             overflow-y: auto;
             background-size: cover;
             background-position: center;
-            background-repeat: no-repeat;
         }
 
         .page.active {
             opacity: 1;
             visibility: visible;
-            transition: opacity 0.35s ease-in-out, visibility 0s linear 0s;
             z-index: 10;
         }
 
@@ -69,32 +67,29 @@
         .card {
             position: relative;
             z-index: 2;
-            max-width: 540px;
+            max-width: 520px;
             width: 100%;
-            background: rgba(248, 250, 252, 0.94);
+            background: rgba(248, 250, 252, 0.95);
             backdrop-filter: blur(14px);
             border-radius: 36px;
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.25), 0 2px 8px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             border: 1px solid rgba(255, 255, 245, 0.25);
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.25);
         }
 
         .cover-card {
             text-align: center;
-            background: rgba(245, 245, 240, 0.94);
-            backdrop-filter: blur(14px);
         }
 
         .cover-title-large {
-            font-size: 3.6rem;
+            font-size: 3rem;
             font-weight: 600;
             letter-spacing: 8px;
             color: #1e2a32;
             padding: 48px 20px 30px;
-            line-height: 1.2;
         }
 
-        .start-btn {
+        .start-btn, .next-btn {
             background: #2c3e4e;
             border: none;
             border-radius: 60px;
@@ -103,66 +98,16 @@
             font-weight: 600;
             color: white;
             width: calc(100% - 56px);
-            margin: 20px auto 40px;
+            margin: 20px auto 32px;
             display: block;
             cursor: pointer;
-        }
-
-        .question-header {
-            padding: 28px 28px 12px;
-            border-bottom: 1px solid rgba(80, 100, 115, 0.2);
-        }
-
-        .q-step {
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: #2c6e6e;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .question-text {
-            font-size: 1.6rem;
-            font-weight: 550;
-            line-height: 1.35;
-            color: #1e2a36;
-            padding: 12px 0 8px;
-        }
-
-        .options-area {
-            padding: 24px 28px 28px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .option-item {
-            background: rgba(255, 255, 245, 0.85);
-            border: 1px solid rgba(90, 110, 125, 0.25);
-            border-radius: 60px;
-            padding: 15px 20px;
-            font-size: 1rem;
-            font-weight: 500;
             text-align: center;
-            cursor: pointer;
-        }
-
-        .option-item.selected {
-            background: #2c3e4e;
-            color: white;
         }
 
         .next-btn {
-            margin: 8px 28px 32px;
             background: rgba(255,255,245,0.9);
-            border: 1px solid rgba(80, 100, 115, 0.5);
-            border-radius: 44px;
-            padding: 14px 0;
-            font-size: 1rem;
-            font-weight: 600;
             color: #2c5f6e;
-            text-align: center;
-            cursor: pointer;
+            border: 1px solid rgba(80,100,115,0.4);
         }
 
         .next-btn.active {
@@ -175,8 +120,50 @@
             pointer-events: none;
         }
 
+        .question-header {
+            padding: 28px 28px 12px;
+            border-bottom: 1px solid rgba(80,100,115,0.2);
+        }
+
+        .q-step {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #2c6e6e;
+            text-transform: uppercase;
+        }
+
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 550;
+            color: #1e2a36;
+            padding: 12px 0 8px;
+        }
+
+        .options-area {
+            padding: 24px 28px 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .option-item {
+            background: rgba(255,255,245,0.85);
+            border: 1px solid rgba(90,110,125,0.25);
+            border-radius: 60px;
+            padding: 14px 20px;
+            font-size: 1rem;
+            font-weight: 500;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .option-item.selected {
+            background: #2c3e4e;
+            color: white;
+        }
+
         .rec-card {
-            background: rgba(250, 250, 248, 0.95);
+            background: rgba(250,250,248,0.95);
         }
 
         .poster-container {
@@ -186,7 +173,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
         }
 
         .song-poster {
@@ -196,13 +182,8 @@
         }
 
         .poster-placeholder {
-            font-size: 2.5rem;
+            font-size: 2rem;
             color: #a0b8cc;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            width: 100%;
         }
 
         .rec-info {
@@ -217,14 +198,13 @@
         }
 
         .song-name {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 650;
             color: #1e2f3a;
-            margin-bottom: 4px;
         }
 
         .song-artist {
-            font-size: 1rem;
+            font-size: 0.95rem;
             color: #4a6272;
             margin-bottom: 16px;
         }
@@ -234,58 +214,55 @@
         }
         .audio-player audio {
             width: 100%;
-            border-radius: 40px;
-            height: 46px;
+            height: 44px;
         }
 
         .action-buttons {
             display: flex;
             gap: 16px;
-            margin: 8px 0;
+            margin: 12px 0;
         }
         .action-btn {
             flex: 1;
-            background: rgba(240, 245, 250, 0.9);
-            border: 1px solid rgba(70, 100, 115, 0.4);
             border-radius: 60px;
             padding: 12px 0;
             font-size: 1rem;
             font-weight: 600;
             text-align: center;
             cursor: pointer;
+            border: none;
         }
         .action-btn.listen-btn {
             background: #2c3e4e;
             color: white;
         }
         .action-btn.leave-btn {
-            background: rgba(220, 225, 230, 0.85);
+            background: rgba(220,225,230,0.85);
             color: #4a5f6e;
         }
 
         .philosophy-quote {
-            font-size: 0.9rem;
-            line-height: 1.45;
+            font-size: 0.85rem;
             color: #2c4e62;
-            background: rgba(245, 245, 240, 0.75);
-            padding: 14px 18px;
-            border-radius: 24px;
+            background: rgba(245,245,240,0.75);
+            padding: 12px 16px;
+            border-radius: 20px;
             margin: 14px 0;
             border-left: 3px solid #8da9b9;
         }
 
         .rec-desc {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #466472;
-            border-top: 1px solid rgba(100, 120, 130, 0.25);
-            padding-top: 16px;
+            border-top: 1px solid rgba(100,120,130,0.25);
+            padding-top: 14px;
         }
 
         .reset-link {
-            margin-top: 18px;
+            margin-top: 16px;
             display: inline-block;
-            background: rgba(245, 245, 240, 0.8);
-            border: 1px solid rgba(90, 110, 120, 0.5);
+            background: rgba(245,245,240,0.8);
+            border: 1px solid rgba(90,110,120,0.5);
             border-radius: 40px;
             padding: 10px 24px;
             font-size: 0.85rem;
@@ -303,6 +280,7 @@
 </head>
 <body>
 <div class="page-viewport">
+    <!-- 第1页 封面 -->
     <div class="page active" id="page1" style="background-image: url('https://picsum.photos/id/104/1200/1600');">
         <div class="card cover-card">
             <div class="cover-title-large">瞬时歌荐</div>
@@ -310,6 +288,7 @@
         </div>
     </div>
 
+    <!-- 第2页 问题1 -->
     <div class="page" id="page2" style="background-image: url('https://picsum.photos/id/29/1200/1600');">
         <div class="card">
             <div class="question-header">
@@ -324,6 +303,7 @@
         </div>
     </div>
 
+    <!-- 第3页 问题2 -->
     <div class="page" id="page3" style="background-image: url('https://picsum.photos/id/42/1200/1600');">
         <div class="card">
             <div class="question-header">
@@ -335,6 +315,7 @@
         </div>
     </div>
 
+    <!-- 第4页 推荐结果 -->
     <div class="page" id="page4" style="background-image: url('https://picsum.photos/id/15/1200/1600');">
         <div class="card rec-card">
             <div class="poster-container" id="posterContainer">
@@ -362,7 +343,7 @@
 </div>
 
 <script>
-    // ================= 配置区域 =================
+    // ================= 配置 =================
     const STATS_ENDPOINT = "https://docs.qq.com/form/page/DRXV2aFdTZWRxa29U#/fill?entry.1={song}&entry.2={action}&entry.3={group}";
 
     let userChoice = { q1: null, q2: null };
@@ -406,13 +387,13 @@
         return q2Bool ? 'C01' : 'C00';
     }
 
-    // 上报函数：跳转到腾讯文档（数据预填）
-    async function reportToPublisher(song, action, group) {
+    // 上报：跳转到腾讯文档
+    function reportToPublisher(song, action, group) {
         let finalUrl = STATS_ENDPOINT
             .replace("{song}", encodeURIComponent(song))
             .replace("{action}", encodeURIComponent(action))
             .replace("{group}", encodeURIComponent(group));
-        console.log("📡 打开腾讯文档:", finalUrl);
+        console.log("打开腾讯文档:", finalUrl);
         window.open(finalUrl, "_blank");
     }
 
@@ -429,6 +410,7 @@
         }
     }
 
+    // 更新推荐页
     function updateRecommendationPage() {
         if (!userChoice.q1 || userChoice.q2 === null) return;
         const groupKey = getUserGroupKey(userChoice.q1, userChoice.q2);
@@ -448,15 +430,21 @@
             posterImg.src = media.posterUrl;
             posterImg.style.display = 'block';
             posterPlace.style.display = 'none';
+        } else {
+            posterImg.style.display = 'none';
+            posterPlace.style.display = 'flex';
         }
+
         const audioContainer = document.getElementById('audioPlayerContainer');
         const audioElem = document.getElementById('songAudio');
         if (media.audioUrl) {
             audioElem.src = media.audioUrl;
             audioContainer.style.display = 'block';
+        } else {
+            audioContainer.style.display = 'none';
         }
 
-        // 绑定按钮
+        // 重新绑定按钮事件
         const listenBtn = document.getElementById('listenTrackBtn');
         const leaveBtn = document.getElementById('leaveTrackBtn');
         const newListen = listenBtn.cloneNode(true);
@@ -474,51 +462,23 @@
         3: document.getElementById('page3'),
         4: document.getElementById('page4')
     };
-    function showPage(idx) {
-        for (let i = 1; i <= 4; i++) if (pages[i]) pages[i].classList.remove('active');
-        if (pages[idx]) pages[idx].classList.add('active');
+    function showPage(index) {
+        for (let i = 1; i <= 4; i++) {
+            if (pages[i]) pages[i].classList.remove('active');
+        }
+        if (pages[index]) pages[index].classList.add('active');
     }
 
-    // 问卷逻辑
-    document.getElementById('startBtn').addEventListener('click', () => { fullReset(); showPage(2); });
-    const q1Opts = document.querySelectorAll('[data-q1]');
-    const toQ2Btn = document.getElementById('toQ2Btn');
-    q1Opts.forEach(opt => opt.addEventListener('click', function() {
-        q1Opts.forEach(o => o.classList.remove('selected'));
-        this.classList.add('selected');
-        userChoice.q1 = this.dataset.q1;
-        toQ2Btn.classList.remove('inactive');
-        toQ2Btn.classList.add('active');
-    }));
-    toQ2Btn.addEventListener('click', () => { if (userChoice.q1) { renderQ2(); showPage(3); } });
-
-    const q2Div = document.getElementById('q2Options');
-    const toResultBtn = document.getElementById('toResultBtn');
-    function renderQ2() {
-        q2Div.innerHTML = '';
-        userChoice.q2 = null;
-        toResultBtn.classList.remove('active');
-        toResultBtn.classList.add('inactive');
-        const isYes = userChoice.q1 === 'yes';
-        document.getElementById('dynamicQuestionText').innerText = isYes ? '你今天更想听带歌词的演唱类歌曲吗？' : '你今天更想听热血/节奏感强烈的歌曲吗？';
-        q2Div.innerHTML = isYes ? 
-            `<div class="option-item" data-q2="yes">是，喜欢演唱类</div><div class="option-item" data-q2="no">否，偏好纯音乐</div>` :
-            `<div class="option-item" data-q2="yes">是，热血燃曲</div><div class="option-item" data-q2="no">否，非热血氛围</div>`;
-        document.querySelectorAll('[data-q2]').forEach(opt => opt.addEventListener('click', function() {
-            document.querySelectorAll('[data-q2]').forEach(o => o.classList.remove('selected'));
-            this.classList.add('selected');
-            userChoice.q2 = this.dataset.q2 === 'yes';
-            toResultBtn.classList.remove('inactive');
-            toResultBtn.classList.add('active');
-        }));
-    }
-    toResultBtn.addEventListener('click', () => { if (userChoice.q2 !== null) { updateRecommendationPage(); showPage(4); } });
-    document.getElementById('resetAllBtn').addEventListener('click', () => { fullReset(); showPage(1); });
+    // 重置
     function fullReset() {
         userChoice = { q1: null, q2: null };
         document.querySelectorAll('.option-item').forEach(o => o.classList.remove('selected'));
-        toQ2Btn.classList.remove('active'); toQ2Btn.classList.add('inactive');
-        toResultBtn.classList.remove('active'); toResultBtn.classList.add('inactive');
+        const toQ2Btn = document.getElementById('toQ2Btn');
+        const toResultBtn = document.getElementById('toResultBtn');
+        toQ2Btn.classList.remove('active');
+        toQ2Btn.classList.add('inactive');
+        toResultBtn.classList.remove('active');
+        toResultBtn.classList.add('inactive');
         document.getElementById('recSongName').innerText = '-';
         document.getElementById('recArtist').innerText = '-';
         document.getElementById('recDesc').innerHTML = '根据你的两个选择，精准推送契合度最高的歌曲。';
@@ -528,9 +488,93 @@
         document.getElementById('audioPlayerContainer').style.display = 'none';
         const audioEl = document.getElementById('songAudio');
         if (audioEl) audioEl.src = '';
+        const q2Div = document.getElementById('q2Options');
+        if (q2Div) q2Div.innerHTML = '';
+        showPage(1);
     }
 
-    window.addEventListener('load', () => { fullReset(); showPage(1); });
+    // 问题1逻辑
+    const startBtn = document.getElementById('startBtn');
+    const toQ2Btn = document.getElementById('toQ2Btn');
+    const q1Options = document.querySelectorAll('[data-q1]');
+    
+    startBtn.addEventListener('click', () => {
+        fullReset();
+        showPage(2);
+    });
+
+    q1Options.forEach(opt => {
+        opt.addEventListener('click', function() {
+            q1Options.forEach(o => o.classList.remove('selected'));
+            this.classList.add('selected');
+            userChoice.q1 = this.getAttribute('data-q1');
+            toQ2Btn.classList.remove('inactive');
+            toQ2Btn.classList.add('active');
+        });
+    });
+
+    toQ2Btn.addEventListener('click', () => {
+        if (!userChoice.q1) return;
+        renderSecondQuestion();
+        showPage(3);
+    });
+
+    // 问题2逻辑
+    const dynamicQuestionText = document.getElementById('dynamicQuestionText');
+    const q2OptionsDiv = document.getElementById('q2Options');
+    const toResultBtn = document.getElementById('toResultBtn');
+
+    function renderSecondQuestion() {
+        q2OptionsDiv.innerHTML = '';
+        userChoice.q2 = null;
+        toResultBtn.classList.remove('active');
+        toResultBtn.classList.add('inactive');
+        
+        if (userChoice.q1 === 'yes') {
+            dynamicQuestionText.innerText = '你今天更想听带歌词的演唱类歌曲吗？';
+            q2OptionsDiv.innerHTML = `
+                <div class="option-item" data-q2="yes">是，喜欢演唱类（带歌词）</div>
+                <div class="option-item" data-q2="no">否，偏好纯音乐／器乐</div>
+            `;
+        } else {
+            dynamicQuestionText.innerText = '你今天更想听热血/节奏感强烈的歌曲吗？';
+            q2OptionsDiv.innerHTML = `
+                <div class="option-item" data-q2="yes">是，热血燃曲／快节奏</div>
+                <div class="option-item" data-q2="no">否，非热血／氛围复古</div>
+            `;
+        }
+        
+        document.querySelectorAll('[data-q2]').forEach(opt => {
+            opt.addEventListener('click', function() {
+                document.querySelectorAll('[data-q2]').forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+                userChoice.q2 = this.getAttribute('data-q2') === 'yes';
+                toResultBtn.classList.remove('inactive');
+                toResultBtn.classList.add('active');
+            });
+        });
+    }
+
+    toResultBtn.addEventListener('click', () => {
+        if (userChoice.q2 === null) return;
+        updateRecommendationPage();
+        showPage(4);
+    });
+
+    // 重置按钮
+    const resetBtn = document.getElementById('resetAllBtn');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            fullReset();
+            showPage(1);
+        });
+    }
+
+    // 初始化
+    window.addEventListener('load', () => {
+        fullReset();
+        console.log("瞬时歌荐已启动 | 腾讯文档统计已配置");
+    });
 </script>
 </body>
 </html>
