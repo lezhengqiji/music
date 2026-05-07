@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-    <title>瞬时歌荐 · 冷启动推荐 | 统计跨设备汇总</title>
+    <title>瞬时歌荐 · 冷启动推荐</title>
     <style>
         * {
             margin: 0;
@@ -20,7 +20,6 @@
             width: 100vw;
         }
 
-        /* 单页视图容器 — 绝对定位叠层，通过显示隐藏实现“跳转”效果 */
         .page-viewport {
             position: relative;
             width: 100%;
@@ -54,7 +53,6 @@
             z-index: 10;
         }
 
-        /* 背景层半透明遮罩 */
         .page::before {
             content: "";
             position: absolute;
@@ -68,7 +66,6 @@
             pointer-events: none;
         }
 
-        /* 卡片磨砂玻璃效果 */
         .card {
             position: relative;
             z-index: 2;
@@ -82,7 +79,6 @@
             border: 1px solid rgba(255, 255, 245, 0.25);
         }
 
-        /* 封面卡片 */
         .cover-card {
             text-align: center;
             background: rgba(245, 245, 240, 0.94);
@@ -96,7 +92,6 @@
             color: #1e2a32;
             padding: 48px 20px 30px;
             line-height: 1.2;
-            font-family: 'Inter', 'Noto Serif SC', serif;
         }
 
         .start-btn {
@@ -111,17 +106,8 @@
             margin: 20px auto 40px;
             display: block;
             cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 6px 14px rgba(0,0,0,0.1);
-            letter-spacing: 1px;
         }
 
-        .start-btn:active {
-            transform: scale(0.96);
-            background: #1e2f3c;
-        }
-
-        /* 问题页面样式 */
         .question-header {
             padding: 28px 28px 12px;
             border-bottom: 1px solid rgba(80, 100, 115, 0.2);
@@ -157,22 +143,13 @@
             padding: 15px 20px;
             font-size: 1rem;
             font-weight: 500;
-            color: #1f3b4c;
             text-align: center;
             cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .option-item:active {
-            transform: scale(0.97);
-            background: rgba(230, 240, 245, 0.95);
         }
 
         .option-item.selected {
             background: #2c3e4e;
-            border-color: #2c3e4e;
             color: white;
-            box-shadow: 0 6px 12px rgba(44,62,78,0.3);
         }
 
         .next-btn {
@@ -186,25 +163,20 @@
             color: #2c5f6e;
             text-align: center;
             cursor: pointer;
-            transition: all 0.2s;
         }
 
         .next-btn.active {
             background: #2c3e4e;
-            border-color: #2c3e4e;
             color: white;
         }
 
         .next-btn.inactive {
             opacity: 0.5;
             pointer-events: none;
-            background: rgba(225, 232, 240, 0.7);
         }
 
-        /* 推荐页海报样式 */
         .rec-card {
             background: rgba(250, 250, 248, 0.95);
-            backdrop-filter: blur(14px);
         }
 
         .poster-container {
@@ -215,28 +187,22 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            position: relative;
         }
 
         .song-poster {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: block;
         }
 
         .poster-placeholder {
             font-size: 2.5rem;
             color: #a0b8cc;
-            background: rgba(30, 40, 50, 0.7);
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100%;
             width: 100%;
-            gap: 12px;
-            text-align: center;
         }
 
         .rec-info {
@@ -246,9 +212,7 @@
         .rec-label {
             font-size: 0.7rem;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
             color: #2c6e6e;
-            font-weight: 600;
             margin-bottom: 8px;
         }
 
@@ -256,7 +220,6 @@
             font-size: 2rem;
             font-weight: 650;
             color: #1e2f3a;
-            line-height: 1.2;
             margin-bottom: 4px;
         }
 
@@ -267,22 +230,18 @@
         }
 
         .audio-player {
-            margin: 12px 0 12px;
-            width: 100%;
+            margin: 12px 0;
         }
         .audio-player audio {
             width: 100%;
             border-radius: 40px;
-            outline: none;
-            background: #f0f2f5;
             height: 46px;
         }
 
         .action-buttons {
             display: flex;
             gap: 16px;
-            margin: 8px 0 8px;
-            justify-content: space-between;
+            margin: 8px 0;
         }
         .action-btn {
             flex: 1;
@@ -292,20 +251,12 @@
             padding: 12px 0;
             font-size: 1rem;
             font-weight: 600;
-            color: #2c5f6e;
             text-align: center;
             cursor: pointer;
-            transition: 0.2s;
-            backdrop-filter: blur(4px);
-        }
-        .action-btn:active {
-            transform: scale(0.96);
         }
         .action-btn.listen-btn {
             background: #2c3e4e;
-            border-color: #2c3e4e;
             color: white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
         .action-btn.leave-btn {
             background: rgba(220, 225, 230, 0.85);
@@ -319,18 +270,15 @@
             background: rgba(245, 245, 240, 0.75);
             padding: 14px 18px;
             border-radius: 24px;
-            margin: 14px 0 16px 0;
+            margin: 14px 0;
             border-left: 3px solid #8da9b9;
-            font-weight: 450;
         }
 
         .rec-desc {
             font-size: 0.85rem;
             color: #466472;
-            line-height: 1.45;
             border-top: 1px solid rgba(100, 120, 130, 0.25);
             padding-top: 16px;
-            margin-top: 4px;
         }
 
         .reset-link {
@@ -341,15 +289,7 @@
             border-radius: 40px;
             padding: 10px 24px;
             font-size: 0.85rem;
-            font-weight: 500;
-            color: #2c5f6e;
             cursor: pointer;
-            transition: 0.2s;
-            text-align: center;
-        }
-
-        .reset-link:active {
-            background: rgba(215, 225, 232, 0.9);
         }
 
         .footer-note {
@@ -358,18 +298,6 @@
             color: #7c93a3;
             margin-top: 12px;
             padding-top: 8px;
-            border-top: 1px solid rgba(100, 120, 130, 0.2);
-        }
-
-        .page::-webkit-scrollbar {
-            width: 4px;
-        }
-        .page::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .page::-webkit-scrollbar-thumb {
-            background: rgba(100,120,130,0.4);
-            border-radius: 10px;
         }
     </style>
 </head>
@@ -418,148 +346,89 @@
                 <div class="song-name" id="recSongName">-</div>
                 <div class="song-artist" id="recArtist">-</div>
                 <div class="audio-player" id="audioPlayerContainer" style="display: none;">
-                    <audio id="songAudio" controls preload="metadata">您的浏览器不支持音频播放。</audio>
+                    <audio id="songAudio" controls preload="metadata"></audio>
                 </div>
-                <div class="action-buttons" id="actionButtons">
+                <div class="action-buttons">
                     <button class="action-btn listen-btn" id="listenTrackBtn">🎧 点击听取</button>
                     <button class="action-btn leave-btn" id="leaveTrackBtn">🚪 离开</button>
                 </div>
                 <div class="philosophy-quote" id="philosophyQuote">音乐是灵魂的镜像，此刻的旋律映照你内心的风景。</div>
                 <div class="rec-desc" id="recDesc">根据你的两个选择，精准推送契合度最高的歌曲。</div>
-                <div style="margin-top: 14px;"><span class="reset-link" id="resetAllBtn">⟳ 重新评测</span></div>
+                <div><span class="reset-link" id="resetAllBtn">⟳ 重新评测</span></div>
             </div>
-            <div class="footer-note">基于问卷先验 · 双问动态分群 | 统计已跨设备汇总至发布者</div>
+            <div class="footer-note">基于问卷先验 · 双问动态分群 | 数据汇总至腾讯文档</div>
         </div>
     </div>
 </div>
 
 <script>
-    // ================= 跨设备统计配置 =================
-    // 请替换为你的 Google 表单提交链接
-    // 如何获取：创建 Google 表单 → 设置问题（歌曲,行为,分组等）→ 获取“预填充链接”或表单提交 URL
-    // 这里提供一个示例 endpoint（实际需要替换成你的表单 action 地址）
-    // 注意：Google Forms 标准提交需要 URL encoded 格式，下面实现了完整的 POST 提交。
-    // 如果你没有配置自己的表单，可以先使用下方的示例（仅用于演示，数据会发送到公共演示端点，实际建议替换）
-    // 强烈建议发布者自行创建表单后替换下面的 WEBHOOK_URL 或 Google Forms 提交链接。
-    
-    // 方案1：使用 Google Forms（推荐，免费） 
-    // 步骤：1. 新建表单 2. 添加字段：歌曲名称、行为类型、用户分组、时间戳 
-    // 3. 点击“发送” → “获取预填充链接” → 提取 action URL
-    // 示例格式：https://docs.google.com/forms/d/e/xxx/formResponse?usp=pp_url&entry.xxx=值
-    // 为方便快速使用，下方内置了模拟跨设备统计（会输出到控制台），你可以用 console 验证。
-    // 如需真实汇总，请创建表单后替换 STATS_ENDPOINT 为你的表单提交地址。
-    
-    // 配置项 ==========
-    // 请替换成你自己的 Google 表单提交 URL (entry ID 需要根据你的表单字段修改)
-    const STATS_ENDPOINT = "https://docs.qq.com/form/page/你的表单ID#/fill?question_1={song}&question_2={action}&question_3={group}";  // 留空则只打印到控制台+本地存储，不做远程提交。填入表单URL后自动上报。
-    // 如果你没有自己的表单，下方的代码会降级为 localStorage 统计 + 控制台输出，数据仅保存在用户本地。
-    // 但为了跨设备查看，推荐填写自己的 Google 表单地址。或者使用 SheetDB / 自定义后端。
-    // 若需要帮助创建表单，请按注释操作。
-    
-    // 备用方案：如果端点未配置，依然会保留本地统计（F12可看），跨设备无法汇总，提示发布者配置。
-    // 为了让发布者立即能体验跨设备统计，可以临时使用一个测试用 JSON 占位，实际还是建议自行创建表单。
-    
-    // 立即演示版本：如果没有配置 endpoint，会在控制台打印并存储到 localStorage，同时模拟发送。
-    // 发布者可查看控制台 “📡 跨设备统计请求” 日志
-    // ==================================================
-    
-    let userChoice = { q1: null, q2: null };
-    
-    // 歌曲媒体配置 (海报及音频)
-    const SONG_MEDIA = {
-        "小幸运": {
-            posterUrl: "https://www.21qupu.com/thumb/ad9be096759c6d82fd2404041e519e8f.jpg",
-            audioUrl: "https://lezhengqiji.github.io/music/music/小幸运.mp3"
-        },
-        "River Flows in You": {
-            posterUrl: "https://ts2.tc.mm.bing.net/th/id/OIP-C.aiO4Hgg_zMxX4N2euZcfrAAAAA?rs=1&pid=ImgDetMain&o=7&rm=3",
-            audioUrl: "https://lezhengqiji.github.io/music/music/River Flows In You.mp3"
-        },
-        "孤勇者": {
-            posterUrl: "https://n.sinaimg.cn/sinakd10115/792/w796h796/20220325/076f-4280776ff6dedd9c96db597a70de1287.jpg",
-            audioUrl: "https://lezhengqiji.github.io/music/music/孤勇者.mp3"
-        },
-        "大风吹": {
-            posterUrl: "https://ts1.tc.mm.bing.net/th/id/R-C.6bd6da2053b3a409d5b524bfb7bc5361?rik=2BweltAYBg4xfw&riu=http%3a%2f%2fexp-picture.cdn.bcebos.com%2fbaab208630486143d931fd868febf6a75e0f537c.jpg%3fx-bce-process%3dimage%252Fcrop%252Cx_0%252Cy_0%252Cw_400%252Ch_300%252Fformat%252Cf_auto%252Fquality%252Cq_80&ehk=o11LnHDmgmx9p1Y1i%2b3U%2bpzgu9KRlAYBtbLMrzsaTzk%3d&risl=&pid=ImgRaw&r=0",
-            audioUrl: "https://lezhengqiji.github.io/music/music/大风吹.mp3"
-        }
-    };
-    
-    const PHILOSOPHY_TEXTS = {
-        "小幸运": "青春是一场大雨，即使感冒了，也盼望回头再淋它一次。遇见你的注定，便是所有幸运的起点。",
-        "River Flows in You": "钢琴如流水，静谧中藏着最深的温柔；所有波澜不惊的日常，都是命运馈赠的和弦。",
-        "孤勇者": "谁说站在光里的才算英雄？黑暗中独自对峙的勇气，才是灵魂真正的勋章。",
-        "大风吹": "岁月如风，吹散浮华却留下真实。任它大风吹，内心自有一片宁静的沃野。"
-    };
-    
-    const RECOMMENDATION_MAP = {
-        C11: { songName: "小幸运", artist: "田馥甄", description: "安静场景下的温暖治愈，流行旋律自然流淌，契合你偏爱的演唱类歌曲。" },
-        C10: { songName: "River Flows in You", artist: "Yiruma 李闰珉", description: "纯净钢琴曲，学习或休闲时流淌的宁静旋律，与纯音乐偏好深度契合。" },
-        C01: { songName: "孤勇者", artist: "陈奕迅", description: "动态节奏下的热血战歌，充满力量与燃感，精准匹配你的节奏偏好。" },
-        C00: { songName: "大风吹", artist: "刘惜君 / 王赫野", description: "复古流行氛围，动态场景里依然保持松弛，非热血的独特韵味。" }
-    };
-    
-    // 跨设备上报函数 (发送到发布者配置的服务器/表单)
+    // ================= 配置区域 =================
     const STATS_ENDPOINT = "https://docs.qq.com/form/page/DRXV2aFdTZWRxa29U#/fill?entry.1={song}&entry.2={action}&entry.3={group}";
 
-async function reportToPublisher(song, action, group, recommendGroup) {
-    let finalUrl = STATS_ENDPOINT
-        .replace("{song}", encodeURIComponent(song))
-        .replace("{action}", encodeURIComponent(action))
-        .replace("{group}", encodeURIComponent(group || recommendGroup));
-    
-    console.log("📡 打开腾讯文档收集表:", finalUrl);
-    window.open(finalUrl, "_blank");
-}
+    let userChoice = { q1: null, q2: null };
 
-// 在点击按钮时调用这个函数
-// 例如：reportToPublisher("小幸运", "listen", "C11");
-        
-        // 同时保留本地存储 (供发布者调试)
-        let localStats = JSON.parse(localStorage.getItem("InstantSongStats_Global") || "[]");
-        localStats.push(payload);
-        localStorage.setItem("InstantSongStats_Global", JSON.stringify(localStats));
-        
-        // 控制台输出汇总简易信息
-        const listenCount = localStats.filter(r => r.action === 'listen').length;
-        const leaveCount = localStats.filter(r => r.action === 'leave').length;
-        console.log(`📊 本地模拟累计: 听取=${listenCount}, 离开=${leaveCount}`);
-    }
-    
-    // 记录行为+跨设备上报
-    function recordActionAndReport(songName, actionType, groupKey) {
-        const groupContext = userChoice.q1 && userChoice.q2 !== null ? `${userChoice.q1}-${userChoice.q2}` : 'unknown';
-        reportToPublisher(songName, actionType, groupContext, groupKey);
-        
-        // 同时保留原有播放或离开逻辑
-        if (actionType === 'listen') {
-            const audioEl = document.getElementById('songAudio');
-            if (audioEl && audioEl.src) {
-                audioEl.play().catch(e => console.log("播放需用户交互", e));
-            }
+    const SONG_MEDIA = {
+        "小幸运": {
+            posterUrl: "https://picsum.photos/id/29/500/500",
+            audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+        },
+        "River Flows in You": {
+            posterUrl: "https://picsum.photos/id/104/500/500",
+            audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
+        },
+        "孤勇者": {
+            posterUrl: "https://picsum.photos/id/42/500/500",
+            audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+        },
+        "大风吹": {
+            posterUrl: "https://picsum.photos/id/15/500/500",
+            audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3"
         }
-        if (actionType === 'leave') {
-            const confirmLeave = confirm("确定离开吗？您的反馈已记录，感谢参与。");
-            if (confirmLeave) {
-                window.location.href = "about:blank";
-                setTimeout(() => { window.close(); }, 100);
-                setTimeout(() => {
-                    document.body.innerHTML = '<div style="text-align:center;padding:50px;">您已离开瞬时歌荐，欢迎下次再来。</div>';
-                }, 200);
-            }
-        }
-    }
-    
+    };
+
+    const PHILOSOPHY_TEXTS = {
+        "小幸运": "青春是一场大雨，即使感冒了，也盼望回头再淋它一次。",
+        "River Flows in You": "钢琴如流水，静谧中藏着最深的温柔。",
+        "孤勇者": "谁说站在光里的才算英雄？",
+        "大风吹": "岁月如风，吹散浮华留下真实。"
+    };
+
+    const RECOMMENDATION_MAP = {
+        C11: { songName: "小幸运", artist: "田馥甄", description: "安静场景 · 演唱类 · 治愈内省" },
+        C10: { songName: "River Flows in You", artist: "Yiruma", description: "安静场景 · 纯音乐 · 冥想之河" },
+        C01: { songName: "孤勇者", artist: "陈奕迅", description: "动态场景 · 热血燃志 · 孤勇前行" },
+        C00: { songName: "大风吹", artist: "刘惜君", description: "动态场景 · 复古非热血 · 自在如风" }
+    };
+
     function getUserGroupKey(q1, q2Bool) {
         const isQuiet = (q1 === 'yes');
         if (isQuiet) return q2Bool ? 'C11' : 'C10';
-        else return q2Bool ? 'C01' : 'C00';
+        return q2Bool ? 'C01' : 'C00';
     }
-    
-    let currentPageIndex = 1;
-    const pages = {1: document.getElementById('page1'),2: document.getElementById('page2'),3: document.getElementById('page3'),4: document.getElementById('page4')};
-    function showPage(index) { for (let i=1;i<=4;i++) pages[i]?.classList.remove('active'); if(pages[index]) pages[index].classList.add('active'); currentPageIndex=index; if(pages[index]) pages[index].scrollTop=0; }
-    
+
+    // 上报函数：跳转到腾讯文档（数据预填）
+    async function reportToPublisher(song, action, group) {
+        let finalUrl = STATS_ENDPOINT
+            .replace("{song}", encodeURIComponent(song))
+            .replace("{action}", encodeURIComponent(action))
+            .replace("{group}", encodeURIComponent(group));
+        console.log("📡 打开腾讯文档:", finalUrl);
+        window.open(finalUrl, "_blank");
+    }
+
+    function recordActionAndReport(songName, actionType, groupKey) {
+        reportToPublisher(songName, actionType, groupKey);
+        if (actionType === 'listen') {
+            const audioEl = document.getElementById('songAudio');
+            if (audioEl && audioEl.src) audioEl.play().catch(e => console.log);
+        }
+        if (actionType === 'leave') {
+            if (confirm("确定离开吗？您的反馈已记录，感谢参与。")) {
+                window.location.href = "about:blank";
+            }
+        }
+    }
+
     function updateRecommendationPage() {
         if (!userChoice.q1 || userChoice.q2 === null) return;
         const groupKey = getUserGroupKey(userChoice.q1, userChoice.q2);
@@ -567,52 +436,101 @@ async function reportToPublisher(song, action, group, recommendGroup) {
         if (!rec) return;
         const song = rec.songName;
         const media = SONG_MEDIA[song] || {};
+
         document.getElementById('recSongName').innerText = rec.songName;
         document.getElementById('recArtist').innerText = rec.artist;
         document.getElementById('recDesc').innerHTML = rec.description;
         document.getElementById('philosophyQuote').innerHTML = `✨ ${PHILOSOPHY_TEXTS[song] || "旋律承载心境"}`;
-        const posterImg = document.getElementById('songPoster'), posterPlace = document.getElementById('posterPlaceholder');
-        if (media.posterUrl) { posterImg.src = media.posterUrl; posterImg.style.display = 'block'; posterPlace.style.display = 'none'; posterImg.onerror = () => { posterImg.style.display='none'; posterPlace.style.display='flex'; posterPlace.innerHTML='🎵 海报加载失败'; }; }
-        else { posterImg.style.display='none'; posterPlace.style.display='flex'; posterPlace.innerHTML='🎵 暂无海报'; }
-        const audioContainer = document.getElementById('audioPlayerContainer'), audioElem = document.getElementById('songAudio');
-        if (media.audioUrl) { audioElem.src = media.audioUrl; audioContainer.style.display = 'block'; audioElem.load(); }
-        else audioContainer.style.display = 'none';
-        
-        // 绑定按钮事件
-        const listenBtn = document.getElementById('listenTrackBtn'), leaveBtn = document.getElementById('leaveTrackBtn');
-        const newListen = listenBtn.cloneNode(true), newLeave = leaveBtn.cloneNode(true);
+
+        const posterImg = document.getElementById('songPoster');
+        const posterPlace = document.getElementById('posterPlaceholder');
+        if (media.posterUrl) {
+            posterImg.src = media.posterUrl;
+            posterImg.style.display = 'block';
+            posterPlace.style.display = 'none';
+        }
+        const audioContainer = document.getElementById('audioPlayerContainer');
+        const audioElem = document.getElementById('songAudio');
+        if (media.audioUrl) {
+            audioElem.src = media.audioUrl;
+            audioContainer.style.display = 'block';
+        }
+
+        // 绑定按钮
+        const listenBtn = document.getElementById('listenTrackBtn');
+        const leaveBtn = document.getElementById('leaveTrackBtn');
+        const newListen = listenBtn.cloneNode(true);
+        const newLeave = leaveBtn.cloneNode(true);
         listenBtn.parentNode.replaceChild(newListen, listenBtn);
         leaveBtn.parentNode.replaceChild(newLeave, leaveBtn);
-        newListen.id = 'listenTrackBtn'; newLeave.id = 'leaveTrackBtn';
-        const currentSong = rec.songName, currentGroup = groupKey;
-        newListen.addEventListener('click', (e) => { e.preventDefault(); recordActionAndReport(currentSong, 'listen', currentGroup); });
-        newLeave.addEventListener('click', (e) => { e.preventDefault(); recordActionAndReport(currentSong, 'leave', currentGroup); });
-        
-        let groupDesc = groupKey === 'C11' ? "安静场景 · 演唱类" : (groupKey === 'C10' ? "安静场景 · 纯音乐" : (groupKey === 'C01' ? "动态场景 · 热血" : "动态场景 · 复古非热血"));
-        const descExtra = document.querySelector('#recDesc');
-        if (descExtra && !descExtra.innerHTML.includes(groupDesc)) descExtra.innerHTML = `${rec.description}<br><span style="font-size:0.75rem; color:#5f7f8c;">🎧 心境 · ${groupDesc}</span>`;
+        newListen.addEventListener('click', () => recordActionAndReport(song, 'listen', groupKey));
+        newLeave.addEventListener('click', () => recordActionAndReport(song, 'leave', groupKey));
     }
-    
-    const startBtn = document.getElementById('startBtn');
-    startBtn.addEventListener('click', () => { fullReset(); showPage(2); });
-    const q1Options = document.querySelectorAll('[data-q1]');
+
+    // 页面切换
+    const pages = {
+        1: document.getElementById('page1'),
+        2: document.getElementById('page2'),
+        3: document.getElementById('page3'),
+        4: document.getElementById('page4')
+    };
+    function showPage(idx) {
+        for (let i = 1; i <= 4; i++) if (pages[i]) pages[i].classList.remove('active');
+        if (pages[idx]) pages[idx].classList.add('active');
+    }
+
+    // 问卷逻辑
+    document.getElementById('startBtn').addEventListener('click', () => { fullReset(); showPage(2); });
+    const q1Opts = document.querySelectorAll('[data-q1]');
     const toQ2Btn = document.getElementById('toQ2Btn');
-    function refreshQ1() { if(userChoice.q1) { toQ2Btn.classList.remove('inactive'); toQ2Btn.classList.add('active'); } else { toQ2Btn.classList.remove('active'); toQ2Btn.classList.add('inactive'); } }
-    q1Options.forEach(opt => opt.addEventListener('click', function() { q1Options.forEach(o=>o.classList.remove('selected')); this.classList.add('selected'); userChoice.q1 = this.getAttribute('data-q1'); refreshQ1(); }));
-    toQ2Btn.addEventListener('click', () => { if(!userChoice.q1) return; renderSecondQuestion(); showPage(3); });
-    const dynamicQuestionText = document.getElementById('dynamicQuestionText'), q2OptionsDiv = document.getElementById('q2Options'), toResultBtn = document.getElementById('toResultBtn');
-    function renderSecondQuestion() {
-        q2OptionsDiv.innerHTML = ''; userChoice.q2 = null; toResultBtn.classList.remove('active'); toResultBtn.classList.add('inactive');
-        if(userChoice.q1 === 'yes') { dynamicQuestionText.innerText = '你今天更想听带歌词的演唱类歌曲吗？'; q2OptionsDiv.innerHTML = `<div class="option-item" data-q2="yes">是，喜欢演唱类（带歌词）</div><div class="option-item" data-q2="no">否，偏好纯音乐／器乐</div>`; }
-        else { dynamicQuestionText.innerText = '你今天更想听热血/节奏感强烈的歌曲吗？'; q2OptionsDiv.innerHTML = `<div class="option-item" data-q2="yes">是，热血燃曲／快节奏</div><div class="option-item" data-q2="no">否，非热血／氛围复古</div>`; }
-        document.querySelectorAll('[data-q2]').forEach(opt => opt.addEventListener('click', function() { document.querySelectorAll('[data-q2]').forEach(o=>o.classList.remove('selected')); this.classList.add('selected'); userChoice.q2 = (this.getAttribute('data-q2') === 'yes'); toResultBtn.classList.remove('inactive'); toResultBtn.classList.add('active'); }));
+    q1Opts.forEach(opt => opt.addEventListener('click', function() {
+        q1Opts.forEach(o => o.classList.remove('selected'));
+        this.classList.add('selected');
+        userChoice.q1 = this.dataset.q1;
+        toQ2Btn.classList.remove('inactive');
+        toQ2Btn.classList.add('active');
+    }));
+    toQ2Btn.addEventListener('click', () => { if (userChoice.q1) { renderQ2(); showPage(3); } });
+
+    const q2Div = document.getElementById('q2Options');
+    const toResultBtn = document.getElementById('toResultBtn');
+    function renderQ2() {
+        q2Div.innerHTML = '';
+        userChoice.q2 = null;
+        toResultBtn.classList.remove('active');
+        toResultBtn.classList.add('inactive');
+        const isYes = userChoice.q1 === 'yes';
+        document.getElementById('dynamicQuestionText').innerText = isYes ? '你今天更想听带歌词的演唱类歌曲吗？' : '你今天更想听热血/节奏感强烈的歌曲吗？';
+        q2Div.innerHTML = isYes ? 
+            `<div class="option-item" data-q2="yes">是，喜欢演唱类</div><div class="option-item" data-q2="no">否，偏好纯音乐</div>` :
+            `<div class="option-item" data-q2="yes">是，热血燃曲</div><div class="option-item" data-q2="no">否，非热血氛围</div>`;
+        document.querySelectorAll('[data-q2]').forEach(opt => opt.addEventListener('click', function() {
+            document.querySelectorAll('[data-q2]').forEach(o => o.classList.remove('selected'));
+            this.classList.add('selected');
+            userChoice.q2 = this.dataset.q2 === 'yes';
+            toResultBtn.classList.remove('inactive');
+            toResultBtn.classList.add('active');
+        }));
     }
-    toResultBtn.addEventListener('click', () => { if(userChoice.q2 !== null) { updateRecommendationPage(); showPage(4); } });
-    const resetBtn = document.getElementById('resetAllBtn');
-    resetBtn.addEventListener('click', () => { fullReset(); showPage(1); });
-    function fullReset() { userChoice.q1 = null; userChoice.q2 = null; q1Options.forEach(opt=>opt.classList.remove('selected')); if(q2OptionsDiv) q2OptionsDiv.innerHTML = ''; toQ2Btn.classList.remove('active'); toQ2Btn.classList.add('inactive'); toResultBtn.classList.remove('active'); toResultBtn.classList.add('inactive'); document.getElementById('recSongName').innerText = '-'; document.getElementById('recArtist').innerText = '-'; document.getElementById('recDesc').innerHTML = '根据你的两个选择，精准推送契合度最高的歌曲。'; document.getElementById('philosophyQuote').innerHTML = '✨ 音乐是灵魂的镜像，此刻的旋律映照你内心的风景。'; const posterImg = document.getElementById('songPoster'), posterPlace = document.getElementById('posterPlaceholder'); if(posterImg && posterPlace) { posterImg.style.display='none'; posterPlace.style.display='flex'; posterPlace.innerHTML='🎵 唱片封面'; } const audioWrap = document.getElementById('audioPlayerContainer'); if(audioWrap) audioWrap.style.display='none'; const audioEl = document.getElementById('songAudio'); if(audioEl) audioEl.src = ''; }
-    window.addEventListener('load', () => { fullReset(); showPage(1); console.log("瞬时歌荐已启动 | 跨设备统计模式已启用，发布者可配置 STATS_ENDPOINT 实现汇总"); });
-    document.querySelectorAll('.option-item, .next-btn, .start-btn, .reset-link').forEach(el => el.style.touchAction = 'manipulation');
+    toResultBtn.addEventListener('click', () => { if (userChoice.q2 !== null) { updateRecommendationPage(); showPage(4); } });
+    document.getElementById('resetAllBtn').addEventListener('click', () => { fullReset(); showPage(1); });
+    function fullReset() {
+        userChoice = { q1: null, q2: null };
+        document.querySelectorAll('.option-item').forEach(o => o.classList.remove('selected'));
+        toQ2Btn.classList.remove('active'); toQ2Btn.classList.add('inactive');
+        toResultBtn.classList.remove('active'); toResultBtn.classList.add('inactive');
+        document.getElementById('recSongName').innerText = '-';
+        document.getElementById('recArtist').innerText = '-';
+        document.getElementById('recDesc').innerHTML = '根据你的两个选择，精准推送契合度最高的歌曲。';
+        document.getElementById('philosophyQuote').innerHTML = '✨ 音乐是灵魂的镜像，此刻的旋律映照你内心的风景。';
+        document.getElementById('songPoster').style.display = 'none';
+        document.getElementById('posterPlaceholder').style.display = 'flex';
+        document.getElementById('audioPlayerContainer').style.display = 'none';
+        const audioEl = document.getElementById('songAudio');
+        if (audioEl) audioEl.src = '';
+    }
+
+    window.addEventListener('load', () => { fullReset(); showPage(1); });
 </script>
 </body>
 </html>
